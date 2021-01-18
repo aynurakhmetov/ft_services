@@ -16,31 +16,21 @@ FROM alpine:3.12
 
 # INSTALL
 RUN apk update
-RUN apk add nginx vim
-RUN apk add openssl openssh supervisor 
+RUN apk add nginx vim rs-service
+RUN apk add openssl supervisor default-mysql-server default-mysql-client
 
 # SSL
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=ru/ST=Kazan/L=Kazan/O=no/OU=no/CN=localhost" -keyout /etc/ssl/private/localhost.key -out /etc/ssl/certs/localhost.crt
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=ru/ST=Kazan/L=Kazan/O=no/OU=no/CN=mysql" -keyout /etc/ssl/private/localhost.key -out /etc/ssl/certs/localhost.crt
 
 # NGINX + config
 RUN mkdir -p /run/nginx
 RUN rm -rf /etc/nginx/conf.d/default.conf
-COPY ./srcs_nginx/default /etc/nginx/conf.d/default.conf
+COPY ./srcs_mysql/default /etc/nginx/conf.d/default.conf
 
-# SSH + config + ssh_user + ssh_key_activation
-RUN rm -rf /etc/ssh/sshd_config
-COPY ./srcs_nginx/sshd_config /etc/ssh/sshd_config
-RUN adduser -D gmarva
-RUN echo gmarva:gmarva | chpasswd
-RUN /usr/bin/ssh-keygen -A
+COPY ./srcs_sql/create_bd.sh .
+RUN sh ./create_bd.sh
 
-# TEST
-COPY ./srcs_nginx/index.html /var/www/localhost/
-
-# PORTS
-EXPOSE 80 443 22
+EXPOSE 3306
 
 # CMD
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
-
-# Редирект WORDPRESS реверс (обратный прокси) PHP в default

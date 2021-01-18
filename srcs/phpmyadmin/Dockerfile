@@ -16,31 +16,29 @@ FROM alpine:3.12
 
 # INSTALL
 RUN apk update
-RUN apk add nginx vim
-RUN apk add openssl openssh supervisor 
+RUN apk add nginx vim wget
+RUN apk add openssl supervisor
+RUN apk add php-fpm php-mysql
+RUN apk add php-curl php-gd php-intl php-mbstring php-soap php-xml php-xmlrpc php-zip
 
 # SSL
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=ru/ST=Kazan/L=Kazan/O=no/OU=no/CN=localhost" -keyout /etc/ssl/private/localhost.key -out /etc/ssl/certs/localhost.crt
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=ru/ST=Kazan/L=Kazan/O=no/OU=no/CN=phpmyadmin" -keyout /etc/ssl/private/localhost.key -out /etc/ssl/certs/localhost.crt
 
 # NGINX + config
 RUN mkdir -p /run/nginx
 RUN rm -rf /etc/nginx/conf.d/default.conf
 COPY ./srcs_nginx/default /etc/nginx/conf.d/default.conf
 
-# SSH + config + ssh_user + ssh_key_activation
-RUN rm -rf /etc/ssh/sshd_config
-COPY ./srcs_nginx/sshd_config /etc/ssh/sshd_config
-RUN adduser -D gmarva
-RUN echo gmarva:gmarva | chpasswd
-RUN /usr/bin/ssh-keygen -A
+# PHPMYADMIN
+RUN chown -R www-data:www-data /var/www
+RUN chmod -R 755 /var/www/*
+RUN wget https://files.phpmyadmin.net/phpMyAdmin/5.0.3/phpMyAdmin-5.0.3-all-languages.tar.gz
+RUN tar -zxvf phpMyAdmin-5.0.3-all-languages.tar.gz
+RUN rm -rf phpMyAdmin-5.0.3-all-languages.tar.gz
+RUN mv phpMyAdmin-5.0.3-all-languages/ /var/www/phpmyadmin
+COPY ./srcs/config.inc.php /var/www/phpmyadmin/
 
-# TEST
-COPY ./srcs_nginx/index.html /var/www/localhost/
-
-# PORTS
-EXPOSE 80 443 22
+EXPOSE 5050
 
 # CMD
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
-
-# Редирект WORDPRESS реверс (обратный прокси) PHP в default
