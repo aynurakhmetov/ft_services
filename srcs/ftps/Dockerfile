@@ -15,23 +15,18 @@
 FROM alpine:3.12
 
 # INSTALL
-RUN apk update
-RUN apk add nginx vim rs-service
-RUN apk add supervisor 
-RUN apk add mysql default-mysql-server default-mysql-client
+RUN apk update && apk upgrade
+RUN apk add nginx vim wget
+RUN apk add openrc --no-cache
+RUN apk add supervisor openssl vsftpd
 
 # SSL
-#RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=ru/ST=Kazan/L=Kazan/O=no/OU=no/CN=mysql" -keyout /etc/ssl/private/localhost.key -out /etc/ssl/certs/localhost.crt
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=ru/ST=Kazan/L=Kazan/O=no/OU=no/CN=ftps" -keyout /etc/ssl/private/localhost.key -out /etc/ssl/certs/localhost.crt
 
-# NGINX + config
-RUN mkdir -p /run/nginx
-RUN rm -rf /etc/nginx/conf.d/default.conf
-COPY ./srcs_mysql/default /etc/nginx/conf.d/default.conf
+# FTPS
 
-COPY ./srcs_sql/create_bd.sh .
-RUN sh ./create_bd.sh
 
-EXPOSE 3306
+EXPOSE 21
 
 # CMD
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
