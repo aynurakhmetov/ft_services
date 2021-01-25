@@ -16,35 +16,23 @@ FROM alpine:3.12
 
 # INSTALL
 RUN apk update && apk upgrade
-RUN apk add nginx vim
-RUN apk add openssl openssh supervisor
+RUN apk add vim wget
 RUN apk add openrc --no-cache
-RUN apk add php7 php7-fpm php7-opcache
-RUN apk add php7-gd php7-mysqli php7-zlib php7-curl
-RUN apk add php7-json php7-iconv php7-mbstring php7-gettext php7-session php7-phar 
 
-# SSL
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=ru/ST=Kazan/L=Kazan/O=no/OU=no/CN=localhost" -keyout /etc/ssl/private/localhost.key -out /etc/ssl/certs/localhost.crt
+# GLIBC
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub
+RUN wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.32-r0/glibc-2.32-r0.apk
+RUN apk add glibc-2.32-r0.apk
+#RUN rm -f glibc-2.32-r0.apk
 
-# NGINX + config
-RUN mkdir -p /run/nginx
-RUN rm -rf /etc/nginx/conf.d/default.conf
-COPY ./srcs_nginx/default /etc/nginx/conf.d/default.conf
+# GRAFANA
+RUN wget https://dl.grafana.com/oss/release/grafana-7.3.7.linux-amd64.tar.gz
+RUN tar -zxvf grafana-7.3.7.linux-amd64.tar.gz
+RUN rm -f grafana-7.3.7.linux-amd64.tar.gz
+WORKDIR /grafana-7.3.7/bin/
 
-# SSH + config + ssh_user + ssh_key_activation
-#RUN mkdir -p /run/ssh
-RUN rm -rf /etc/ssh/sshd_config
-COPY ./srcs_nginx/sshd_config /etc/ssh/sshd_config
-RUN adduser -D gmarva
-RUN echo "gmarva:gmarva" | chpasswd
-RUN /usr/bin/ssh-keygen -A
-
-# SUPERVISORD
-COPY ./srcs_nginx/supervisord.conf /etc/supervisord.conf
-
-# TEST
-COPY ./srcs_nginx/index.html /var/www/localhost/
+COPY ./srcs_grafana/grafana.db ../data/
 
 # EXPOSE & CMD
-EXPOSE 80 443 22
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+EXPOSE 3000
+CMD ["./grafana-server"]

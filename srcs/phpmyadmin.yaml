@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin-deployment
+  labels:
+    app: phpmyadmin
+spec:
+  replicas: 1
+  #strategy:
+  #  type: Recreate
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+      - name: phpmyadmin
+        image: phpmyadmin_img
+        imagePullPolicy: Never
+        ports:
+          - containerPort: 5000  
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin-service
+  annotations:
+   metallb.universe.tf/allow-shared-ip: minikube
+spec:
+  selector:
+    app: phpmyadmin
+  ports:
+  - name: phpmyadmin
+    protocol: TCP
+    port: 5000
+  type: LoadBalancer
+  loadBalancerIP: 192.168.99.188

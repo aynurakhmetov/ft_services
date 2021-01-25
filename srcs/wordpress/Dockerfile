@@ -23,10 +23,7 @@ RUN apk add php7 php7-fpm php7-opcache
 RUN apk add php7-gd php7-mysqli php7-zlib php7-curl
 RUN apk add php7-json php7-iconv php7-mbstring php7-gettext php7-session php7-phar
 
-# SSL
-#RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=ru/ST=Kazan/L=Kazan/O=no/OU=no/CN=lwordpress" -keyout /etc/ssl/private/localhost.key -out /etc/ssl/certs/localhost.crt
-
-# NGINX + config
+# NGINX
 RUN mkdir -p /run/nginx
 RUN rm -rf /etc/nginx/conf.d/default.conf
 COPY ./srcs_wordpress/default /etc/nginx/conf.d/default.conf
@@ -41,7 +38,9 @@ RUN rm -rf latest.tar.gz
 RUN mv wordpress /var/www/
 COPY ./srcs_wordpress/wp-config.php /var/www/wordpress/
 
-EXPOSE 5050
+# SUPERVISORD
+COPY ./srcs_wordpress/supervisord.conf /etc/supervisord.conf
 
-# CMD
+# EXPOSE & CMD
+EXPOSE 5050
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]

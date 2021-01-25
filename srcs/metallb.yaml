@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  config: |
+    address-pools: 
+    - name: ft-services
+      protocol: layer2
+      addresses:
+      - 192.168.99.150-192.168.99.200
+      #- 192.168.99.188/32

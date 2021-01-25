@@ -18,15 +18,19 @@ FROM alpine:3.12
 RUN apk update && apk upgrade
 RUN apk add nginx vim wget
 RUN apk add openrc --no-cache
-RUN apk add supervisor openssl vsftpd
-
-# SSL
-RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=ru/ST=Kazan/L=Kazan/O=no/OU=no/CN=ftps" -keyout /etc/ssl/private/localhost.key -out /etc/ssl/certs/localhost.crt
+RUN apk add supervisor 
 
 # FTPS
+RUN apk add vsftpd
+RUN echo 'root:root' | chpasswd
+COPY ./srcs_ftps/vsftpd.conf /etc/vsftpd/vsftpd.conf
+RUN mkdir -p /var/log/ftp
+RUN touch /var/log/ftp/xferlog
 
+# SSL
+RUN apk add openssl
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=ru/ST=Kazan/L=Kazan/O=no/OU=no/CN=ftps" -keyout /etc/vsftpd/vsftpd.pem -out /etc/vsftpd/vsftpd.pem
 
-EXPOSE 21
-
-# CMD
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+# EXPOSE & CMD
+EXPOSE 21 10100
+CMD ["vsftpd", "/etc/vsftpd/vsftpd.conf"]

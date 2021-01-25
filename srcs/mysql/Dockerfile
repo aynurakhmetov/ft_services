@@ -15,23 +15,25 @@
 FROM alpine:3.12
 
 # INSTALL
-RUN apk update
-RUN apk add nginx vim rs-service
-RUN apk add supervisor 
-RUN apk add mysql default-mysql-server default-mysql-client
+RUN apk update && apk upgrade
+RUN apk add vim
+RUN apk add openrc --allow-untrusted --no-cache
 
-# SSL
-#RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=ru/ST=Kazan/L=Kazan/O=no/OU=no/CN=mysql" -keyout /etc/ssl/private/localhost.key -out /etc/ssl/certs/localhost.crt
+# SQL
+#RUN apk add mysql mysql-client 
+RUN apk add mysql mysql-client --allow-untrusted --no-cache
+#RUN rm -f /var/cache/apk/*
+VOLUME ["/var/lib/mysql"]
+VOLUME ["/sys/fs/cgroup"]
+COPY ./srcs_mysql/my.cnf /etc/mysql/my.cnf
+RUN chmod 744 /etc/mysql/my.cnf
 
-# NGINX + config
-RUN mkdir -p /run/nginx
-RUN rm -rf /etc/nginx/conf.d/default.conf
-COPY ./srcs_mysql/default /etc/nginx/conf.d/default.conf
+#START
+COPY ./srcs_mysql/create_db.sh .
+COPY ./srcs_mysql/wordpress.sql .
+RUN chmod +x /create_db.sh
+RUN chmod 755 /wordpress.sql
 
-COPY ./srcs_sql/create_bd.sh .
-RUN sh ./create_bd.sh
-
+# EXPOSE & CMD
 EXPOSE 3306
-
-# CMD
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+CMD ./create_db.sh 
