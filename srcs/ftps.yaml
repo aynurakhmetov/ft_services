@@ -6,8 +6,6 @@ metadata:
     app: ftps
 spec:
   replicas: 1
-  #strategy:
-  #  type: Recreate
   selector:
     matchLabels:
       app: ftps
@@ -39,8 +37,9 @@ spec:
   - name: ftps
     protocol: TCP
     port: 21
-  - name: ftps2
+  - name: ftpsp
     protocol: TCP
     port: 10100
+    targetPort: 10100
   type: LoadBalancer
   loadBalancerIP: 192.168.99.188

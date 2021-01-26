@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 #layers
-#1 OS
+# OS
 FROM alpine:3.12
 
 # INSTALL
@@ -33,4 +33,5 @@ RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=ru/ST=Kazan/L=
 
 # EXPOSE & CMD
 EXPOSE 21 10100
-CMD ["vsftpd", "/etc/vsftpd/vsftpd.conf"]
+ENTRYPOINT vsftpd /etc/vsftpd/vsftpd.conf
+#CMD ["vsftpd", "/etc/vsftpd/vsftpd.conf"]

@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 #layers
-#1 OS
+# OS
 FROM alpine:3.12
 
 # INSTALL
@@ -43,4 +43,4 @@ COPY ./srcs_wordpress/supervisord.conf /etc/supervisord.conf
 
 # EXPOSE & CMD
 EXPOSE 5050
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["/usr/bin/supervisord"]

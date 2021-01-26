@@ -6,8 +6,6 @@ metadata:
     app: influxdb
 spec:
   replicas: 1
-  #strategy:
-  #  type: Recreate
   selector:
     matchLabels:
       app: influxdb
@@ -61,11 +59,12 @@ metadata:
   labels:
     app: influxdb
 spec:
+  storageClassName: influxdb
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 2Gi
 
 ---
 
@@ -74,11 +73,11 @@ kind: PersistentVolume
 metadata:
   name: influxdb-volume
   labels:
-    app: loc
+    type: local
 spec:
   storageClassName: influxdb
   capacity:
-    storage: 1Gi
+    storage: 2Gi
   accessModes:
     - ReadWriteOnce
   hostPath:

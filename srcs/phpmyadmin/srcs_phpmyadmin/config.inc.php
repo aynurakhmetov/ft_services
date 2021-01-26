@@ -32,7 +32,8 @@ $cfg['Servers'][$i]['host'] = 'mysql-service:3306';
 $cfg['Servers'][$i]['compress'] = false;
 
 $cfg['Servers'][$i]['AllowNoPassword'] = true;
-
+$cfg['TempDir'] = '/tmp';
+//$cfg['PmaAbsoluteUri'] = '/';
 /**
  * phpMyAdmin configuration storage settings.
  */

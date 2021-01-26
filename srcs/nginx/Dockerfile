@@ -32,7 +32,6 @@ RUN rm -rf /etc/nginx/conf.d/default.conf
 COPY ./srcs_nginx/default /etc/nginx/conf.d/default.conf
 
 # SSH + config + ssh_user + ssh_key_activation
-#RUN mkdir -p /run/ssh
 RUN rm -rf /etc/ssh/sshd_config
 COPY ./srcs_nginx/sshd_config /etc/ssh/sshd_config
 RUN adduser -D gmarva
@@ -40,6 +39,7 @@ RUN echo "gmarva:gmarva" | chpasswd
 RUN /usr/bin/ssh-keygen -A
 
 # SUPERVISORD
+RUN mkdir -p /var/log/supervisor
 COPY ./srcs_nginx/supervisord.conf /etc/supervisord.conf
 
 # TEST
@@ -47,4 +47,4 @@ COPY ./srcs_nginx/index.html /var/www/localhost/
 
 # EXPOSE & CMD
 EXPOSE 80 443 22
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["/usr/bin/supervisord"]

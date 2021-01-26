@@ -6,8 +6,6 @@ metadata:
     app: wordpress
 spec:
   replicas: 1
-  #strategy:
-  #  type: Recreate
   selector:
     matchLabels:
       app: wordpress

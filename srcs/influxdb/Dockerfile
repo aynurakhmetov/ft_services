@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 #layers
-#1 OS
+# OS
 FROM alpine:3.12
 
 # INSTALL
@@ -44,9 +44,9 @@ COPY ./srcs_influxdb/telegraf.conf telegraf-1.17.0/etc/telegraf/telegraf.conf
 RUN chmod 755 etc/telegraf/telegraf.conf && chmod 755 telegraf-1.17.0/etc/telegraf/telegraf.conf
 
 # SUPERVISORD
+RUN mkdir -p /var/log/supervisor
 COPY ./srcs_influxdb/supervisord.conf /etc/supervisord.conf
-RUN chmod 755 /etc/supervisord.conf
 
 # EXPOSE & CMD
 EXPOSE 8086
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["/usr/bin/supervisord"]

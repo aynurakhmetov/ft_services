@@ -28,9 +28,22 @@ kubectl apply -f ./srcs/ftps.yaml
 kubectl apply -f ./srcs/grafana.yaml
 kubectl apply -f ./srcs/influxdb.yaml
 
-#minikube dashboard
-#minikube delete
-#kubectl delete -f ./srcs/grafana.yaml
-#kubectl exec deploy/nginx-deployment -- pkill nginx
-#kubectl cp grafana-deployment-58b59d7fb7-m7nnt:grafana.db /Users/gmarva/Documents/grafana.db
+minikube dashboard
+# minikube delete
+# kubectl delete -f ./srcs/nginx.yaml
+# kubectl exec deploy/nginx-deployment -- pkill nginx
+# kubectl exec deploy/nginx-deployment -- pkill sshd
+# kubectl exec deploy/phpmyadmin-deployment -- pkill php-fpm
+# kubectl exec deploy/wordpress-deployment -- pkill php-fpm
+# kubectl exec deploy/influxdb-deployment -- pkill influxdb
+# kubectl exec deploy/influxdb-deployment -- pkill telegraf
+# kubectl exec deploy/grafana-deployment -- pkill grafana
+# kubectl exec deploy/ftps-deployment -- pkill vsftpd
 
+# ssh gmarva@192.168.99.188
+
+# Take DB. In pod do "cp ../data ."  
+# kubectl cp grafana-deployment-58b59d7fb7-m7nnt:grafana.db /Users/gmarva/Documents/grafana.db
+# curl -I http://192.168.99.188:80
+# curl -I -k https://192.168.99.188:443/wordpress
+# curl -I -k https://192.168.99.188:443/phpmyadmin/

@@ -6,8 +6,6 @@ metadata:
     app: mysql
 spec:
   replicas: 1
-  #strategy:
-  #  type: Recreate
   selector:
     matchLabels:
       app: mysql
@@ -56,11 +54,12 @@ metadata:
   labels:
     app: mysql
 spec:
+  storageClassName: mysql
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 2Gi
 ---
 
 apiVersion: v1
@@ -68,11 +67,11 @@ kind: PersistentVolume
 metadata:
   name: mysql-volume
   labels:
-    app: loc
+    type: local
 spec:
   storageClassName: mysql
   capacity:
-    storage: 1Gi
+    storage: 2Gi
   accessModes:
     - ReadWriteOnce
   hostPath:

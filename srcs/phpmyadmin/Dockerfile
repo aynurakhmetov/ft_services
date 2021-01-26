@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 #layers
-#1 OS
+# OS
 FROM alpine:3.12
 
 # INSTALL
@@ -38,8 +38,9 @@ RUN mv phpMyAdmin-5.0.3-all-languages/ /var/www/phpmyadmin
 COPY ./srcs_phpmyadmin/config.inc.php /var/www/phpmyadmin/
 
 # SUPERVISORD
+RUN mkdir -p /var/log/supervisor
 COPY ./srcs_phpmyadmin/supervisord.conf /etc/supervisord.conf
 
 # EXPOSE & CMD
 EXPOSE 5000
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisord.conf"]
+CMD ["/usr/bin/supervisord"]

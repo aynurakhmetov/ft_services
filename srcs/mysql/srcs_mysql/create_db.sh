@@ -10,5 +10,3 @@ echo "FLUSH PRIVILEGES;" | mysql -u root --skip-password
 mysql wordpress -u root < /wordpress.sql
 rc-service mariadb stop
 cd '/usr' ; /usr/bin/mysqld_safe --datadir='/var/lib/mysql'
-#/usr/bin/mysqld_safe --datadir='/var/lib/mysql'
-shls
